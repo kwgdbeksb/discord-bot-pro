@@ -1,0 +1,95 @@
+server:
+  # Prefer panel-provided SERVER_PORT when startup command is locked;
+  # fallback to explicit LAVALINK_PORT, then to 2333.
+  port: ${SERVER_PORT:${LAVALINK_PORT:2333}}
+  address: ${LAVALINK_HOST:0.0.0.0}
+  http:
+    cors: true
+  # Keep-alive settings for 24/7 operation
+  undertow:
+    # Keep connections alive
+    io-threads: 4
+    worker-threads: 400
+    # Connection timeout settings
+    options:
+      KEEP_ALIVE: true
+      TCP_NODELAY: true
+      # Keep connections alive for 30 minutes
+      IDLE_TIMEOUT: 1800000
+
+lavalink:
+  server:
+    password: ${LAVALINK_PASSWORD:youshallnotpass}
+    sources:
+      youtube: false  # Disable built-in YouTube source
+      bandcamp: true
+      soundcloud: true
+      twitch: true
+      vimeo: true
+      mixer: false
+    ytsearch: true
+    player:
+      trackStuckThresholdMs: 10000
+      useSeekGhosting: true
+    # Connection and stability settings for 24/7 operation
+    ws:
+      # WebSocket keep-alive settings
+      resumeTimeout: 60
+      resumeKey: ${LAVALINK_RESUME_KEY:lavalink-resume}
+    # HTTP client settings for external requests
+    httpConfig:
+      # Increase timeouts for better stability
+      proxyHost: ""
+      proxyPort: 0
+      proxyUser: ""
+      proxyPassword: ""
+      # Connection pool settings
+      maxPoolSize: 10
+      maxIdleConnections: 10
+      keepAliveDuration: 30000
+      connectionTimeout: 10000
+      readTimeout: 30000
+
+  # Load YouTube source plugin via default plugin repository
+  plugins:
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.15.0"
+      snapshot: false
+
+plugins:
+  # YouTube source plugin (built-in in v4, but keep explicit block)
+  youtube:
+    enabled: true
+    allowSearch: true
+    allowDirectVideoIds: true
+    clients:
+      - WEB
+      - ANDROID_VR
+      - WEB_REMIX
+      - WEB_EMBEDDED_PLAYER
+      - ANDROID_TESTSUITE
+      - ANDROID_LITE
+      - MUSIC
+      - ANDROID_MUSIC
+      - TVHTML5_SIMPLY_EMBEDDED_PLAYER
+    # OAuth configuration (optional)
+    oauth:
+      enabled: false
+      refreshToken: ""
+    # PoToken configuration (optional)
+    poToken: ""
+    # Additional settings for better compatibility
+    playback:
+      nonMusicMode: false
+      youtubePlaylistLoadLimit: 6
+    # Client rotation settings
+    clientRotation:
+      enabled: true
+      clients:
+        - ANDROID_TESTSUITE
+        - WEB
+        - ANDROID_MUSIC
+        - TVHTML5_SIMPLY_EMBEDDED_PLAYER
+
+logging:
+  file:
+    path: logs/
